@@ -1,7 +1,8 @@
 const express = require('express');
 const mysql = require('mysql2/promise');
 
-const app = express()
+const app = express();
+app.use(express.json());
 const port = 3002
 
 const pool = mysql.createPool({
@@ -16,12 +17,34 @@ const pool = mysql.createPool({
 app.get('/users', async (req, res) =>{
     try{
         const [rows] = await pool.query("SELECT * FROM users");
-        if (rows.length >0) {
+        if (rows.length >0 && rows != null) {
             res.json(rows);
         }
         else{
             res.send("anyadat");
         }
+    } catch (error){
+        res.status(500)
+    }
+})
+
+app.post('/users', async (req,res) =>{
+    const {name, email}= req.body;
+    try{
+        const [result] =  await pool.query('INSERT INTO users (name, email) VALUES (?, ?)', [name, email])
+        res.status(201).json(result);
+
+    } catch (error){
+        res.status(500)
+    }
+})
+
+app.put('/users', async (req,res) =>{
+    const {name, email, id}= req.body;
+    try{
+        const [result] =  await pool.query('UPDATE `users` SET `name`= ?,`email`= ? WHERE id = ?', [name, email, id])
+        res.status(201).json(result);
+
     } catch (error){
         res.status(500)
     }
