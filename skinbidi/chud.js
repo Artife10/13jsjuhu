@@ -55,6 +55,20 @@ app.put('/auto/:id', async (req,res) =>{
     }
 })
 
+app.delete('/auto/:id', async (req,res) =>{
+    const {id} = req.params;
+    try{
+        const [result] =  await pool.query("DELETE FROM `auto` WHERE id = ?", [id])
+
+        if (result.affectedRows === 0) return res.status(404).send("cica");
+
+        res.json({id: Number(id)});
+
+    } catch (error){
+        res.status(500).json({error: error.message});
+    }
+})
+
 app.get('/', (req, res) => {
   res.send('<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjo-3xQazqEBILK3txDIdOV9qsrfyVTRF_4nrukspOTQ&s">')
 })
