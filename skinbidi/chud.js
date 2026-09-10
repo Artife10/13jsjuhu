@@ -40,6 +40,20 @@ app.post('/auto', async (req,res) =>{
     }
 })
 
+app.put('/auto/:id', async (req,res) =>{
+    const {marka, model, ccm, evjarat, szin}= req.body;
+    const {id} = req.params;
+    try{
+        const [result] =  await pool.query("UPDATE `auto` SET `marka`=?,`model`=?,`ccm`=?,`evjarat`=?,`szin`=? WHERE id= ?", [marka, model, ccm, evjarat, szin, id])
+
+        if (result.affectedRows === 0) return res.status(404).send("cica");
+
+        res.json({id: Number(id), marka, model, ccm, evjarat, szin});
+
+    } catch (error){
+        res.status(500).json({error: error.message});
+    }
+})
 
 app.get('/', (req, res) => {
   res.send('<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjo-3xQazqEBILK3txDIdOV9qsrfyVTRF_4nrukspOTQ&s">')
