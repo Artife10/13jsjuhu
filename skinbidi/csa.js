@@ -24,7 +24,7 @@ app.get('/users', async (req, res) =>{
             res.send("anyadat");
         }
     } catch (error){
-        res.status(500)
+        res.status(500).json({error: error.message});
     }
 })
 
@@ -35,20 +35,27 @@ app.post('/users', async (req,res) =>{
         res.status(201).json(result);
 
     } catch (error){
-        res.status(500)
+        res.status(500).json({error: error.message});
     }
 })
 
-app.put('/users', async (req,res) =>{
-    const {name, email, id}= req.body;
+app.put('/users/:id', async (req,res) =>{
+    const {name, email}= req.body;
+    const {id} = req.params;
     try{
         const [result] =  await pool.query('UPDATE `users` SET `name`= ?,`email`= ? WHERE id = ?', [name, email, id])
-        res.status(201).json(result);
+
+        if (result.affectedRows === 0) return res.status(404).send("cica");
+
+        res.json({id: Number(id), name, email});
 
     } catch (error){
-        res.status(500)
+        res.status(500).json({error: error.message});
     }
 })
+
+
+
 
 app.get('/', (req, res) => {
   res.send('<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjo-3xQazqEBILK3txDIdOV9qsrfyVTRF_4nrukspOTQ&s">')
