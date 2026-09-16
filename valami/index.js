@@ -56,6 +56,37 @@ app.delete('/konyvek/:id', async (req,res)=> {
         res.json({id: Number(id)});
 
     }catch(error){
+        res.status(500).json({error: "Internal server error"});
+    }
+})
+
+app.delete('/konyvek/:id', async (req,res)=> {
+    const {id} = req.params
+
+    try{
+        const [result] =  await pool.query("DELETE FROM `books` WHERE id = ?", [id])
+
+        if (result.affectedRows === 0) return res.status(404).send("cica");
+
+        res.json({id: Number(id)});
+
+    }catch(error){
+        res.status(500).json({error: "Internal server error"});
+    }
+})
+
+
+app.put('/konyvek/:id', async (req,res) =>{
+    const {title, author, published_year, is_available}= req.body;
+    const {id} = req.params;
+    try{
+        const [result] =  await pool.query("UPDATE `books` SET `title`=?,`author`=?,`published_year`=?, `is_available`=? WHERE id= ?", [title, author, published_year, is_available, id])
+
+        if (result.affectedRows === 0) return res.status(404).send("cica");
+
+        res.json({id: Number(id), title, author, published_year, is_available});
+
+    } catch (error){
         res.status(500).json({error: error.message});
     }
 })
