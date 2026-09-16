@@ -1,0 +1,14 @@
+.card{
+    h1{
+        color: black;
+        background-color: red;
+    }
+    p{
+        color: black;
+        background-color: #f0f0f0;
+    }
+    h4{
+        color: black;
+        background-color: green;
+    }
+}
