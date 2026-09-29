@@ -3,7 +3,7 @@ import db from '../config/db.js'
 
 const router = express.Router();
 
-router.get('/', async (req, res) =>{
+router.get('/stats', async (req, res) =>{
     try{
         const [totalrows] = await db.query('SELECT COUNT(*) AS total FROM tasks')
         const [statusrows] = await db.query('SELECT status, COUNT(*) as count FROM tasks GROUP BY status');
@@ -17,6 +17,21 @@ router.get('/', async (req, res) =>{
     }
     catch (error){
         res.status(500).json({error: 'Internal Server Error'})
+    }
+})
+
+
+router.get('/', async (req, res) =>{
+    try{
+        let sql = `SELECT t.id, t.description, t.status, t.priority, t.created_at, c.id AS category_id, c.name AS category_name, c.color AS category_color 
+        FROM tasks t LEFT JOIN categories c ON t.category_id = c.id WHERE 1=1`;
+        const [results] = await db.query(sql);
+        
+        res.json(results);
+
+    }
+    catch (error){
+        res.status(500).json({error: `Internal Server Error: ${error}`})
     }
 })
 
