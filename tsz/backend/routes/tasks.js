@@ -11,7 +11,7 @@ router.get('/stats', async (req, res) =>{
         const stats = {total: totalrows[0].total, TODO: 0, IN_PROGRESS: 0, DONE: 0}
 
         statusrows.forEach(x=> {
-            stats[x.status] = x.coun;
+            stats[x.status] = x.count;
         });
         res.json(stats)
     }
